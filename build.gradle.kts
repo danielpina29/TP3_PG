@@ -9,9 +9,12 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    flatDir { dirs("libs") }
 }
 
-
+dependencies {
+    implementation("pt.isel:CanvasLib-jvm:1.0.0")
+}
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "13"
