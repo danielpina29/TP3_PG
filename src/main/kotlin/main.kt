@@ -8,17 +8,23 @@ fun main () {
         val arena = Canvas(ARENA_WIDTH,ARENA_HEIGHT, BLACK)
         var game = initializeGame()
 
+
+
         arena.onMouseDown {
-
-
+            game = startTheGame(game)
         }
+
         arena.onMouseMove {
-            game = moveRacket(it.x,game)
-
+            game = Game(game.balls,moveRacket(it.x,game), game.brick, game.state)
+            game = addBallOnRacket(game)
         }
+
         arena.onTimeProgress(10) {
+
             game = computeNextGame(game)
             drawGame(arena, game)
+            println(game.state)
+
         }
     }
 

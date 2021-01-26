@@ -3,33 +3,63 @@ data class Game(val balls : List<Ball>, val racket : Racket, val brick : List<Br
 enum class GameState { NOT_STARTED, STARTED }
 
 fun initializeGame() : Game {
-    val emptyListBalls : List<Ball> = listOf()
     val newRacket : Racket = initializeRacket()
+    val newBalls : List<Ball> = listOf<Ball>()
     val newBricks : List<Brick> = levelBricks
 
-    return  Game(emptyListBalls, newRacket, newBricks, GameState.NOT_STARTED)
+    return  Game(newBalls, newRacket, newBricks, GameState.NOT_STARTED)
 }
 
-fun computeNextBalls(game: Game) : List<Ball> {
-    val newballs = game.balls.map { moveBall(it) }
-     return newballs
+fun addBallOnRacket(game: Game) : Game {
+    val newBalls = listOf<Ball>(createBall(game.racket.location.x,game.racket.location.y - BALL_RADIUS,initialVelocity))
+    return Game(newBalls,game.racket, game.brick, GameState.NOT_STARTED)
+}
+
+fun startTheGame(game:Game) : Game {
+    if (game.state == GameState.NOT_STARTED) {
+        val newState = GameState.STARTED
+        return Game(game.balls, game.racket, game.brick, newState)
+    }
+    else  {
+        val newBalls = game.balls.filter {
+            it.current == Location(game.racket.location.x, game.racket.location.y - BALL_RADIUS)
+        }.map {
+            addVelocity(it)
+        }
+        return Game(newBalls, game.racket, game.brick, GameState.STARTED)
+    }
 }
 
 
-fun computeNextRacket(game: Game) : Racket {
-    fun detectRacketLeftCollision(game: Game) : Boolean{
-        return game.racket.location.x <= RACKET_SIZE / 2
+
+
+
+
+
+
+
+
+fun computeNextBalls(game: Game): List<Ball> {
+
+    val movedballs = game.balls.map {
+        val movedBall = moveBall(it)
+
+        when {
+            offLimitsX(movedBall) -> invertVelocityX(movedBall)
+            offLimitsY(movedBall) -> invertVelocityY(movedBall)
+            
+            else -> movedBall
+        }
+
+    }.filter {
+        ballInsideArena(it)
     }
-    fun detectRacketRightCollision(game: Game) : Boolean{
-        return game.racket.location.x >= ARENA_WIDTH - RACKET_SIZE /2
-    }
-   return when {
-       detectRacketLeftCollision(game)-> Racket(Location((RACKET_SIZE / 2).toDouble(), game.racket.location.y))
-       detectRacketRightCollision(game) -> Racket(Location((ARENA_WIDTH - RACKET_SIZE /2).toDouble(), game.racket.location.y))
-       else -> game.racket
-    }
+
+    return movedballs
 }
+
+
 
 fun computeNextGame(game: Game) : Game =
-    Game(computeNextBalls(game), computeNextRacket(game), game.brick, game.state)
+    Game(computeNextBalls(game), game.racket, game.brick, game.state)
 

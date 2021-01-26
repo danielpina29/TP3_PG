@@ -4,11 +4,16 @@ import pt.isel.canvas.*
 private const val LIGHT_RED = 16764107
 private const val CORRECTED_BAR = 8
 
+fun remainingBallsCounter(game: Game, arena: Canvas) {
+    arena.drawText(20,580,game.balls.size.toString(), WHITE)
+}
+
 fun drawGame(arena: Canvas, game: Game) {
     arena.erase()
     game.balls.forEach { drawBall(arena, it) }
     drawRacket(arena, game.racket)
     game.brick.forEach { drawBrick(it.position,it.Colour,arena) }
+    remainingBallsCounter(game,arena)
 }
 
 private fun drawBall(arena: Canvas, ball: Ball) {

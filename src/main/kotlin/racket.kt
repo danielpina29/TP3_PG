@@ -15,8 +15,20 @@ fun initializeRacket() : Racket{
     )
 }
 
-fun moveRacket(itx : Int, game: Game):Game {
-    return Game(game.balls,Racket(Location(itx.toDouble(), RACKET_LOCATION_Y.toDouble())), game.brick, game.state)
+fun moveRacket(itx : Int, game: Game):Racket {
+
+    fun detectRacketLeftCollision() =
+        itx <= RACKET_SIZE / 2
+
+    fun detectRacketRightCollision() =
+      itx >= ARENA_WIDTH - RACKET_SIZE /2
+
+    return when {
+        detectRacketLeftCollision()-> Racket(Location((RACKET_SIZE / 2).toDouble(), game.racket.location.y))
+        detectRacketRightCollision() -> Racket(Location((ARENA_WIDTH - RACKET_SIZE /2).toDouble(), game.racket.location.y))
+        else -> Racket(Location(itx.toDouble(), RACKET_LOCATION_Y.toDouble()))
+    }
+
 }
 
 
