@@ -6,6 +6,11 @@ data class Brick(val position : Location, val maxHits: Int, val Colour : Int)
 const val BRICK_WIDTH = 32
 const val BRICK_HEIGHT = 15
 
+fun Brick.touch() = when( maxHits ) { null -> this
+    1 -> null
+    else -> copy( maxHits = maxHits-1 )
+}
+
 fun createBrick(position: Location, maxHits: Int, colour: Int) : Brick =
         Brick(position, maxHits, colour)
 

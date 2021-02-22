@@ -64,7 +64,7 @@ private fun drawRacket(arena: Canvas, racket: Racket) {
     arena.drawRect(
             x = (racket.location.x - RACKET_SIZE / 2).toInt(),
             y = (racket.location.y + RACKET_HEIGHT / 2).toInt(),
-            width = RACKET_SIZE,
+            width = RACKET_SIZE.toInt(),
             height = CORRECTED_BAR,
             color = WHITE
     )

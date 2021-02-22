@@ -11,19 +11,20 @@ fun main () {
 
 
         arena.onMouseDown {
-            game = startTheGame(game)
+            game = Game(createBall(game),game.racket, game.brick, game.state)
         }
 
         arena.onMouseMove {
             game = Game(game.balls,moveRacket(it.x,game), game.brick, game.state)
-            game = addBallOnRacket(game)
+
         }
 
         arena.onTimeProgress(10) {
-
             game = computeNextGame(game)
             drawGame(arena, game)
-            println(game.state)
+
+
+
 
         }
     }

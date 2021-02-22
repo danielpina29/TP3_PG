@@ -5,7 +5,9 @@ const val RACKET_HEIGHT = 15
 const val RACKET_S1 = 10
 const val RACKET_S2 = 15
 const val RACKET_LOCATION_Y = 550
-const val RACKET_SIZE = 60
+const val RACKET_SIZE = 60.0
+const val RACKET_HALF_SIZE = RACKET_SIZE / 2
+const val RACKET_SM = 10
 
 
 fun initializeRacket() : Racket{

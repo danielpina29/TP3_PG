@@ -5,7 +5,7 @@ data class Ball(val start: Location, val current: Location, val velocity: Veloci
 
 const val BALL_RADIUS = 7
 
-val initialVelocity = Velocity(0.0, 0.0)
+val initialVelocity = Velocity(0.0, -4.0)
 
 fun initializeBall(game: Game): Ball {
     val start = Location(game.racket.location.x, game.racket.location.y + RACKET_HEIGHT / 2)
