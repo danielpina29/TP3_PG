@@ -8,20 +8,25 @@ fun main () {
         val arena = Canvas(ARENA_WIDTH,ARENA_HEIGHT, BLACK)
         var game = initializeGame()
 
-
-
         arena.onMouseDown {
-            game = Game(createBall(game),game.racket, game.brick, game.state)
+            game = game.startGame(game)
         }
-
         arena.onMouseMove {
-            game = Game(game.balls,moveRacket(it.x,game), game.brick, game.state)
-
+            game = Game(game.ball,game.lifes, moveRacket(it.x,game), game.bricks, game.state)
         }
+
 
         arena.onTimeProgress(10) {
+
+            game = computeNextLifesAndBall(game)
             game = computeNextGame(game)
             drawGame(arena, game)
+            println(game.state)
+
+            if (finishGame(game))
+                arena.close()
+
+
 
 
 

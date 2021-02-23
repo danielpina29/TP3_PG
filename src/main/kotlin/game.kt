@@ -1,53 +1,65 @@
-data class Game(val balls : List<Ball>, val racket : Racket, val brick : List<Brick>, val state : GameState )
+data class Game(val ball : List<Ball>, val lifes : List<Ball>, val racket : Racket, val bricks : List<Brick>, val state : GameState )
 
 enum class GameState { NOT_STARTED, STARTED }
 
 fun initializeGame() : Game {
     val newRacket : Racket = initializeRacket()
-    val newBalls : List<Ball> = listOf<Ball>()
+    val newBalls : List<Ball> = listOf(createBallOnRacket(newRacket))
+    val newLifes : List<Ball> = listOf(
+            createLifes(208.0, 580.0),
+            createLifes(187.0, 580.0),
+            createLifes(166.0, 580.0),
+            createLifes(229.0, 580.0),
+            createLifes(250.0,580.0)
+    )
     val newBricks : List<Brick> = levelBricks
 
-    return  Game(newBalls, newRacket, newBricks, GameState.NOT_STARTED)
+    return  Game(newBalls, newLifes, newRacket, newBricks, GameState.NOT_STARTED)
 }
 
-fun createBall(game: Game) : List<Ball>{
-    val newList = game.balls + Ball(Location(500.0,500.0),Location(500.0,500.0), initialVelocity )
-    return newList
-}
+fun Game.startGame(game: Game) : Game =
+    Game(this.ball.map { it.addVelocity(game) }, this.lifes, this.racket, this.bricks, GameState.STARTED)
 
-fun computeNextBalls(game: Game): List<Ball> {
+fun computeNextBall(game: Game): List<Ball> {
 
-    val movedballs = game.balls.map {
-        val movedBall = moveBall(it)
-        when {
-            offLimitsX(movedBall) -> invertVelocityX(movedBall)
-            offLimitsY(movedBall) -> invertVelocityY(movedBall)
-            detectBallLeftS1(it, game.racket) && isDeflectedByRacket(it,game.racket) -> reflectBallLeftS1(it)
-            detectBallLeftS2(it, game.racket) && isDeflectedByRacket(it,game.racket)  -> reflectBallLeftS2(it)
-            detectBallRightS1(it, game.racket) && isDeflectedByRacket(it,game.racket)  ->  reflectBallRightS1(it)
-            detectBallRightS2(it, game.racket) && isDeflectedByRacket(it,game.racket)  -> reflectBallRightS2(it)
-            detectBallMiddleSector(it, game.racket) && isDeflectedByRacket(it,game.racket)  -> reflectBallMiddle(it)
+        val movedball = game.ball.map {
+            val movedBall = moveBall(it)
+            when {
+                game.state == GameState.NOT_STARTED -> it.moveWithRacket(game)
+                offLimitsLeftX(movedBall) && isDeflectedByWallsLeft(movedBall) -> invertVelocityLeftX(it)
+                offLimitsRightX(movedBall) && isDeflectedByWallsRight(movedBall) -> invertVelocityRightX(it)
+                offLimitsY(movedBall) && isDeflectedByWallsTop(movedBall) -> invertVelocityY(it)
+                detectBallLeftS1(it, game.racket) && isDeflectedByRacket(it, game.racket) -> reflectBallLeftS1(it)
+                detectBallLeftS2(it, game.racket) && isDeflectedByRacket(it, game.racket) -> reflectBallLeftS2(it)
+                detectBallRightS1(it, game.racket) && isDeflectedByRacket(it, game.racket) -> reflectBallRightS1(it)
+                detectBallRightS2(it, game.racket) && isDeflectedByRacket(it, game.racket) -> reflectBallRightS2(it)
+                detectBallMiddleSector(it, game.racket) && isDeflectedByRacket(it, game.racket) -> reflectBallMiddle(it)
 
-            else -> movedBall
+
+                else -> movedBall
+            }
+
+        }.filter {
+            ballInsideArena(it)
         }
-    }.filter {
-        ballInsideArena(it)
+    return movedball
     }
-    return movedballs
+
+
+fun computeNextLifesAndBall(game: Game) : Game{
+    return if(game.state == GameState.STARTED && game.ball.isEmpty())
+        Game(listOf(createBallOnRacket(game.racket)),game.lifes - game.lifes.last(), game.racket, game.bricks, GameState.NOT_STARTED )
+    else
+        Game(game.ball, game.lifes, game.racket, game.bricks, game.state)
 }
 
-fun computeNextBricks(game: Game){
-    val selectedBalls = game.balls.filter {
+fun finishGame(game: Game) : Boolean =
+        game.state == GameState.STARTED && game.lifes.isEmpty() && game.ball.isEmpty()
 
-    }
-    val newBricks = game.balls.mapNotNull {
-        game.brick.mapNotNull {
 
-        }
-    }
-}
-
+fun computeNextBricks(ball :Ball, bricks :List<Brick>) =
+        bricks.mapNotNull { if (collides(ball,it)) it.touch() else it }
 
 fun computeNextGame(game: Game) : Game =
-    Game(computeNextBalls(game), game.racket, computeNextBricks(game), game.state)
+    Game(computeNextBall(game), game.lifes, game.racket, computeNextBricks(game.ball.first(), game.bricks), game.state)
 

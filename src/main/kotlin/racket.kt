@@ -17,7 +17,7 @@ fun initializeRacket() : Racket{
     )
 }
 
-fun moveRacket(itx : Int, game: Game):Racket {
+fun moveRacket(itx : Int, game: Game): Racket {
 
     fun detectRacketLeftCollision() =
         itx <= RACKET_SIZE / 2
