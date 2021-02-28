@@ -1,18 +1,25 @@
-import pt.isel.*
 import pt.isel.canvas.*
 
 private const val LIGHT_RED = 16764107
 private const val CORRECTED_BAR = 8
 
 
+/**
+ * Draws the game with all of his components
+ */
 
 fun drawGame(arena: Canvas, game: Game) {
     arena.erase()
     game.ball.forEach { drawBall(arena, it) }
     drawRacket(arena, game.racket)
-    game.bricks.forEach { drawBrick(it.position,it.Colour,arena) }
+    game.bricks.forEach { drawBrick(it.position,it.colour,arena) }
     game.lifes.forEach { drawBall(arena, it) }
+    arena.drawText(ARENA_WIDTH/2 - 40,32,game.score.toString(), WHITE)
 }
+
+/**
+ * Physically draws the Ball in the arena.
+ */
 
 private fun drawBall(arena: Canvas, ball: Ball) {
     arena.drawCircle(
@@ -22,6 +29,10 @@ private fun drawBall(arena: Canvas, ball: Ball) {
             CYAN
     )
 }
+
+/**
+ * Physically draws the Racket in the arena.
+ */
 
 private fun drawRacket(arena: Canvas, racket: Racket) {
     arena.drawRect(

@@ -1,3 +1,7 @@
+/**
+ * The following functions return true if the ball has hitted a determined spot in the Racket
+ */
+
 fun detectBallLeftS1(ball: Ball, racket: Racket): Boolean =
         ball.current.x in (racket.location.x - RACKET_HALF_SIZE)..((racket.location.x - RACKET_HALF_SIZE) + RACKET_S1)
 

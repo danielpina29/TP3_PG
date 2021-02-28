@@ -1,5 +1,9 @@
+/**
+ * The following functions return true if the ball has hitted a determined spot in the Brick
+ */
+
 fun detectHitBottomBrick(ball: Ball, brick: Brick) : Boolean =
-        ball.current.x in brick.position.x - BALL_RADIUS .. brick.position.x+BRICK_WIDTH+BALL_RADIUS &&
+        ball.current.x in brick.position.x - BALL_RADIUS .. brick.position.x+BRICK_WIDTH + BALL_RADIUS &&
                 ball.current.y == brick.position.y + BALL_RADIUS + BRICK_HEIGHT
 
 fun detectHitTopBrick(ball: Ball, brick: Brick) : Boolean =
